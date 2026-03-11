@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "molecules": [
+    "[H]OC1([H])N([H])C123[H]C214N25C67=C([H])(OC28([H])O([H])C829C([H])=C2([H])C391[H])C612[H]C13([H])C1([H])([H])O([H])C16=C1([H]C1([H])[H])C6(C1([H])OC123[H])C754[H]",
+    "[H]C1=C2C3([H])(C4([H])C56(N([H])C78C9([H])C7([H])C9([H])([H])C7(=C(C9([H])C(=C%10N([H])C%10([H])[H])C9([H])[H])=C7=O)C85C16[H])C43([H])[H])[N+]2([H])([H])[H]",
+    "[H]N1[N-]([H])C2=OC2([O-])C2([H])C13C1([H])N4C5=NC6([O-])=C(OC54[H])C64=C([N+]#[N+]#[N-2])N45C1([H])C51([H])C4(=C15=NO5)C([H])([H])C234[H]",
+    "[H]C1=C2C3=C([H])(C#[N+]#N)N34C35([H]C3([H])[H])O(C5([H])C3([H])[H]O3)C4([H])([H])C13=NN3C([H])([H])C2([H])[H]",
+    "[H]OC(C([H])=O)=C1C2([H])C34(OO3)C3([H])C5([H])C([H])=C56[O-]C6(=O)C35([H])ON5([H])C124[H]",
+    "[H]O=C(=O)C1([H])C([H])([H])C12=C1(ON1[H])C21(C2([H])C(=O)C2(=O)N([H])[H])OC1=O",
+    "[H]OC1([H])C(=O)=NC2=C(SON2[O-])N([H])C1([H])N=NN([H])[H]",
+    "[H]C1=C23=[N+](O2)C24=C([H])=C25[O-][N+]5(=O)C4([H])=C3O2O=N12",
+    "[H]C1(N=O)C([H])(=O)C12([H])C1(=O)OC12([H])[H]",
+    "[H]C1(C=O)=[H][H]1.[H]ON=O"
+  ],
+  "count": 10
+}

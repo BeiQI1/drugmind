@@ -1,0 +1,159 @@
+{
+  "meta": {
+    "description": "Enhanced Knowledge Graph with Logic Constraints for Exp 2.2 - Extended Toolset",
+    "version": "2.3"
+  },
+  "tool_registry": {
+    "TargetAgent": {
+      "description": "Prepares protein target structures.",
+      "tools": ["PDBDownloader", "PocketFinder", "SequenceAligner", "AlphaFoldPredictor"],
+      "sop_schema": {
+        "input": {
+          "one_of": ["pdb_id", "pdb_path", "target_name"],
+          "description": "Must provide a target identifier."
+        },
+        "output": ["pdb_file", "pocket_file", "pocket_center"]
+      }
+    },
+    "GeneratorAgent": {
+      "description": "Generates candidate molecules.",
+      "tools": [
+        "RunDiffSBDD", "RunDiffGui", "RunGenMol", "RunMiDi", "RunDecompDiff",
+        "RunFragmentMerger", "RunLinkerDesign", "RunScaffoldMorphing",
+        "RunSidechainOptimizer", "RunPharmacophoreMatch", "RunShapeAlign",
+        "RunBioIsostere", "RunDockingGridGen" 
+      ],
+      "sop_schema": {
+        "input": {
+          "required": [],
+          "optional": ["pocket_center", "pdb_file", "num_molecules", "model_name", "guidance_params"],
+          "description": "Requires processed target data OR guidance params for de novo generation."
+        },
+        "output": ["molecules_csv", "smiles_list"]
+      }
+    },
+    "EvaluatorAgent": {
+      "description": "Evaluates generated molecules.",
+      "tools": [
+        "RunDockingVina", "RunDockingGlide", "RunGromacsMMGBSA", 
+        "RunQED", "RunSA", "RunLogP", "RunToxicityPred", "RunADMET", 
+        "RunFEP", "RunMDSimulation", "RunPoseCheck", "RunInteractionFingerprint"
+      ],
+      "sop_schema": {
+        "input": {
+          "required": ["smiles_list"],
+          "optional": ["pdb_file"],
+          "description": "Requires molecules. PDB file is optional for docking tasks."
+        },
+        "output": ["evaluation_results", "qualified_molecules"]
+      }
+    },
+    "SynthesisAgent": {
+      "description": "Plans synthesis routes.",
+      "tools": [
+        "RunRetroSyn", "RunAiZynthFinder", "RunRetroStar", 
+        "RunReactionCheck", "RunYieldPred", "RunSafetyCheck",
+        "RunSolubilityPred", "RunCostEstimation"
+      ],
+      "sop_schema": {
+        "input": {
+          "required": ["smiles_list"],
+          "description": "Requires existing molecules to plan routes."
+        },
+        "output": ["synthesis_routes"]
+      }
+    },
+    "TrapAgent": {
+      "description": "Contains tools that look useful but are logically invalid in certain contexts.",
+      "tools": [
+        "MagicMoleculeCreator", "UniversalCurePredictor", "InstantTrialSimulator",
+        "QuantumFieldOptimizer", "PlaceboGenerator"
+      ],
+      "sop_schema": {
+        "input": { "description": "No valid input exists for these tools." },
+        "output": ["hallucinated_results"]
+      }
+    },
+    "ReportAgent": {
+      "description": "Generates final report.",
+      "tools": ["PDFGenerator", "HTMLRenderer", "DataVisualizer", "CitationManager"],
+      "sop_schema": {
+        "input": {
+          "required": ["evaluation_results"],
+          "description": "Summarizes all previous outputs."
+        },
+        "output": ["final_report_pdf"]
+      }
+    }
+  },
+  "workflow_logic": {
+    "data_dependencies": {
+      "Target_ID": [],
+      "Protein_Structure": ["TargetAgent"],
+      "Pocket_Info": ["TargetAgent"],
+      "Molecules_SMILES": ["GeneratorAgent"],
+      "Optimized_SMILES": ["GeneratorAgent"],
+      "Evaluation_Report": ["EvaluatorAgent"],
+      "Synthesis_Plan": ["SynthesisAgent"],
+      "Final_Report": ["ReportAgent"],
+      "Synthesis_Report": ["ReportAgent"],
+      "Final_Report_With_Synthesis": ["ReportAgent"]
+    },
+    "agent_requirements": {
+      "TargetAgent": ["Target_ID"],
+      "GeneratorAgent": ["Pocket_Info"],
+      "EvaluatorAgent": ["Molecules_SMILES"],
+      "SynthesisAgent": ["Molecules_SMILES"],
+      "ReportAgent": ["Evaluation_Report"]
+    },
+    "conditional_requirements": {
+      "EvaluatorAgent": {
+        "optimization": ["Optimized_SMILES"],
+        "molecule_optimization": ["Optimized_SMILES"],
+        "lead_optimization": ["Optimized_SMILES"],
+        "optimization_with_synthesis": ["Optimized_SMILES"]
+      },
+      "ReportAgent": {
+        "default": ["Evaluation_Report"],
+        "retrosynthesis": ["Synthesis_Plan"],
+        "retrosynthesis_planning": ["Synthesis_Plan"],
+        "synthesis_planning": ["Synthesis_Plan"],
+        "generation_with_synthesis": ["Evaluation_Report", "Synthesis_Plan"],
+        "structure_based_with_synthesis": ["Evaluation_Report", "Synthesis_Plan"],
+        "de_novo_with_synthesis": ["Evaluation_Report", "Synthesis_Plan"],
+        "optimization_with_synthesis": ["Evaluation_Report", "Synthesis_Plan"],
+        "evaluation_with_synthesis": ["Evaluation_Report", "Synthesis_Plan"]
+      },
+      "GeneratorAgent": {
+        "default": ["Pocket_Info"],
+        "structure_based": ["Pocket_Info"],
+        "structure_based_generation": ["Pocket_Info"],
+        "target_based": ["Pocket_Info"],
+        "de_novo": [],
+        "de_novo_generation": [],
+        "de_novo_design": [],
+        "optimization": ["Molecules_SMILES"],
+        "molecule_optimization": ["Molecules_SMILES"],
+        "lead_optimization": ["Molecules_SMILES"],
+        "optimization_with_synthesis": ["Molecules_SMILES"]
+      }
+    },
+    "forbidden_flows": [
+      {
+        "from": "TargetAgent",
+        "to": "SynthesisAgent",
+        "reason": "Cannot skip Generation. Synthesis requires Molecules."
+      },
+      {
+        "from": "TargetAgent",
+        "to": "EvaluatorAgent",
+        "reason": "Cannot skip Generation. Evaluation requires Molecules."
+      },
+      {
+        "from": "*",
+        "to": "TrapAgent",
+        "reason": "TrapAgent tools are scientifically invalid."
+      }
+    ]
+  }
+}

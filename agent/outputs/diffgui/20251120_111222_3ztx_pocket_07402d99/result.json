@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "molecules": [
+    {
+      "rank": 1,
+      "smiles": "CC(O)CC1CCCC2C(C(N)=O)C3C(=O)NC4CC(c5ccccc5)CC5C(=O)N(C12)C3C45",
+      "num_atoms": 34,
+      "scores": {
+        "sa": 0.54,
+        "qed": 0.6292384135757336
+      }
+    },
+    {
+      "rank": 2,
+      "smiles": "O=C1C2NCNC2NC2C(O)C(O)C(O)CN12",
+      "num_atoms": 17,
+      "scores": {
+        "sa": 0.54,
+        "qed": 0.25508943964276776
+      }
+    }
+  ],
+  "message": "生成 2 个分子",
+  "raw_error": null
+}

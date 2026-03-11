@@ -1,0 +1,3 @@
+{
+  "error": "Error(s) in loading state_dict for SBDDTrainLoop:\n\tsize mismatch for dynamics.ligand_atom_emb.weight: copying a param with shape torch.Size([127, 13]) from checkpoint, the shape in current model is torch.Size([127, 14])."
+}

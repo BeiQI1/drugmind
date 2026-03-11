@@ -1,0 +1,25 @@
+# large folders
+test/
+tests/
+model/
+data/
+services/
+
+# logs
+logs/*
+!logs/.gitkeep
+
+# caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# local tool/editor dirs
+.trae/
+.vscode/
+
+# env files
+agent/.env
+
+# system
+.DS_Store

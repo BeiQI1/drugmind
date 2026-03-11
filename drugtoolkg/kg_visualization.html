@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Design Agent Knowledge Graph</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; background-color: #f0f2f5; }
+        #mynetwork {
+            width: 100vw;
+            height: 100vh;
+            border: 1px solid lightgray;
+            background-color: #ffffff;
+        }
+        #legend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .legend-section { margin-bottom: 10px; }
+        .legend-title { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        .legend-item { display: flex; align-items: center; margin-bottom: 3px; font-size: 12px; }
+        .color-box { width: 12px; height: 12px; margin-right: 8px; border-radius: 3px; }
+        .shape-circle { border-radius: 50%; }
+        #details {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        h3 { margin-top: 0; color: #333; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e1e4e8;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="legend">
+    <div class="legend-section">
+        <div class="legend-title">Agent Layers (Box)</div>
+        <div id="agent-legend"></div>
+    </div>
+    <div class="legend-section">
+        <div class="legend-title">Tool Categories (Dot)</div>
+        <div id="tool-legend"></div>
+    </div>
+</div>
+
+<div id="mynetwork"></div>
+
+<div id="details">
+    <h3>Node Details</h3>
+    <div id="node-content">Click a node to see details</div>
+</div>
+
+<script type="text/javascript">
+    // Embedded JSON Data from agent_kg.json
+    const kgData = {
+  "meta": {
+    "description": "Drug Design Multi-Agent System Knowledge Graph",
+    "version": "2.0",
+    "layers": ["Interaction", "Data_Preparation", "Reasoning_Control", "Generation", "Evaluation", "Synthesis", "System"]
+  },
+  "tool_registry": {
+    "PDBFixer": { "category": "Target Preparation", "source": "OpenMM", "function": "Fixes PDB problems (missing atoms/residues)", "input": "PDB", "output": "PDB", "usage": "Python/CLI" },
+    "fpocket": { "category": "Target Preparation", "source": "Discngine", "function": "Cavity detection and pocket identification", "input": "PDB", "output": "PDB/Text", "usage": "CLI" },
+    "AmberTools": { "category": "Target Preparation", "source": "Amber", "function": "MD Prep, force field assignment, and analysis", "input": "PDB", "output": "Top/Crd", "usage": "CLI" },
+    "RDKit": { "category": "Ligand Preparation", "source": "GitHub", "function": "Chemoinformatics, conformer generation, and file conversion", "input": "SMILES", "output": "SDF/Mol", "usage": "Python" },
+    "OpenBabel": { "category": "Ligand Preparation", "source": "GitHub", "function": "Chemical file format conversion and coordinate generation", "input": "Various", "output": "Various", "usage": "CLI/Python" },
+    "Meeko": { "category": "Ligand Preparation", "source": "ForliLab", "function": "Preparation of ligands for AutoDock Vina (PDBQT)", "input": "SDF", "output": "PDBQT", "usage": "Python" },
+    "AutoDock Vina": { "category": "Docking", "source": "Scripps", "function": "Fast molecular docking and virtual screening", "input": "PDBQT", "output": "PDBQT/Log", "usage": "CLI" },
+    "Smina": { "category": "Docking", "source": "Gnina", "function": "Vina fork with enhanced scoring and minimization", "input": "PDB/SDF", "output": "SDF", "usage": "CLI" },
+    "Gnina": { "category": "Docking", "source": "Gnina", "function": "Deep learning-based molecular docking and scoring", "input": "PDB/SDF", "output": "SDF", "usage": "CLI" },
+    "AutoFragDiff": { "category": "Generative Models", "source": "Local", "function": "Fragment-based structure-based drug design", "input": "PDB/Frag", "output": "SDF", "usage": "model.autofragdiff" },
+    "DecompDiff": { "category": "Generative Models", "source": "Local", "function": "SBDD with Decomposed Priors for linker/scaffold generation", "input": "PDB", "output": "SDF", "usage": "model.DecompDiff" },
+    "DiffSBDD": { "category": "Generative Models", "source": "Local", "function": "Equivariant Diffusion for Structure-Based Drug Design", "input": "PDB", "output": "SDF", "usage": "model.DiffSBDD" },
+    "MiDi": { "category": "Generative Models", "source": "Local", "function": "Mixed Graph/3D Diffusion for molecular generation", "input": "PDB/SMILES", "output": "SDF", "usage": "model.MiDi" },
+    "GenMol": { "category": "Generative Models", "source": "Local", "function": "Discrete Diffusion (SAFE) for molecule generation", "input": "Text/SMILES/PDB", "output": "SMILES/SDF", "usage": "model.genmol" },
+    "DiffGui": { "category": "Generative Models", "source": "Local", "function": "Guided Equivariant Diffusion for target-specific generation", "input": "PDB", "output": "SDF", "usage": "model.DiffGui" },
+    "Chemprop": { "category": "ADMET/Scoring", "source": "GitHub", "function": "Molecular property prediction using D-MPNN", "input": "SMILES", "output": "CSV", "usage": "CLI/Python" },
+    "QED": { "category": "ADMET/Scoring", "source": "RDKit", "function": "Quantitative Estimate of Drug-likeness score", "input": "SMILES", "output": "Float", "usage": "Python" },
+    "SA_Score": { "category": "ADMET/Scoring", "source": "RDKit", "function": "Synthetic Accessibility score", "input": "SMILES", "output": "Float", "usage": "Python" },
+    "PoseBusters": { "category": "Analysis", "source": "GitHub", "function": "Validation of docking poses using physical constraints", "input": "SDF/PDB", "output": "Bool", "usage": "Python/CLI" },
+    "PLIP": { "category": "Analysis", "source": "PharmaI", "function": "Protein-Ligand Interaction Profiling (H-bonds, etc.)", "input": "PDB", "output": "XML/Text", "usage": "CLI/Python" },
+    "ProLIF": { "category": "Analysis", "source": "ChemoSim", "function": "Protein-Ligand Interaction Fingerprints", "input": "MD/PDB", "output": "DF", "usage": "Python" },
+    "MDAnalysis": { "category": "Analysis", "source": "GitHub", "function": "Analysis of molecular dynamics trajectories", "input": "Traj", "output": "Data", "usage": "Python" },
+    "OpenMM": { "category": "Analysis", "source": "GitHub", "function": "High-performance molecular dynamics simulation", "input": "PDB", "output": "Traj", "usage": "Python" },
+    "Syntheseus": { "category": "Synthesis", "source": "Microsoft/MILA", "function": "Retrosynthesis planning and reaction prediction", "input": "SMILES", "output": "Routes/Tree", "usage": "Python" },
+    "PyTorch": { "category": "AI & Deep Learning", "source": "Meta", "function": "Deep learning framework", "input": "Tensors", "output": "Models", "usage": "Python" },
+    "Transformers": { "category": "AI & Deep Learning", "source": "Hugging Face", "function": "Pre-trained models (NLP/Bio)", "input": "Text/Seq", "output": "Embeddings", "usage": "Python" },
+    "LangChain": { "category": "AI & Deep Learning", "source": "LangChain", "function": "LLM orchestration", "input": "Prompt", "output": "Chain", "usage": "Python" },
+    "LangGraph": { "category": "AI & Deep Learning", "source": "LangChain", "function": "Stateful multi-agent orchestration", "input": "State", "output": "State", "usage": "Python" },
+    "Accelerate": { "category": "AI & Deep Learning", "source": "Hugging Face", "function": "Distributed training", "input": "Model", "output": "Model", "usage": "Python" },
+    "Pandas": { "category": "Data Science", "source": "NumFOCUS", "function": "Data manipulation", "input": "CSV/Data", "output": "DataFrame", "usage": "Python" },
+    "NumPy": { "category": "Data Science", "source": "NumFOCUS", "function": "Numerical computing", "input": "Array", "output": "Array", "usage": "Python" },
+    "SciPy": { "category": "Data Science", "source": "NumFOCUS", "function": "Scientific computing", "input": "Array", "output": "Result", "usage": "Python" },
+    "NetworkX": { "category": "Data Science", "source": "Los Alamos", "function": "Graph theory", "input": "Nodes/Edges", "output": "Graph", "usage": "Python" },
+    "Matplotlib": { "category": "Data Science", "source": "NumFOCUS", "function": "Plotting", "input": "Data", "output": "Figure", "usage": "Python" },
+    "Seaborn": { "category": "Data Science", "source": "Waskom", "function": "Statistical data visualization", "input": "Data", "output": "Figure", "usage": "Python" },
+    "FastAPI": { "category": "Web & Interaction", "source": "Tiangolo", "function": "High-performance API framework", "input": "Request", "output": "JSON", "usage": "Python" },
+    "Gradio": { "category": "Web & Interaction", "source": "Hugging Face", "function": "UI for ML models", "input": "Model", "output": "Web UI", "usage": "Python" },
+    "Uvicorn": { "category": "Web & Interaction", "source": "Encode", "function": "ASGI Web Server", "input": "App", "output": "Service", "usage": "CLI" },
+    "WandB": { "category": "DevOps & Monitoring", "source": "Weights & Biases", "function": "Experiment tracking", "input": "Metrics", "output": "Dashboard", "usage": "Python" },
+    "Psutil": { "category": "DevOps & Monitoring", "source": "Giampaolo", "function": "System monitoring", "input": "None", "output": "Stats", "usage": "Python" },
+    "Rich": { "category": "Developer Utilities", "source": "Textualize", "function": "Terminal formatting", "input": "Text", "output": "Styled Text", "usage": "Python" },
+    "Click": { "category": "Developer Utilities", "source": "Pallets", "function": "CLI creation", "input": "Code", "output": "CLI", "usage": "Python" }
+  },
+  "links": [
+    { "source": "TargetAgent.knowledge_base.Pocket", "relation": "PROVIDES_CONTEXT_FOR", "target": "GeneratorAgents.knowledge_base.SBDD_Model" },
+    { "source": "RAGAgent.knowledge_base.Literature", "relation": "INFORMS", "target": "ConditionAgent.knowledge_base.Constraint" },
+    { "source": "GeneratorAgents.knowledge_base.Molecule", "relation": "EVALUATED_BY", "target": "EvaluatorAgent.knowledge_base.Metric" },
+    { "source": "EvaluatorAgent.knowledge_base.Score", "relation": "OPTIMIZED_BY", "target": "CoordinatorAgent.knowledge_base.Strategy" },
+    { "source": "SynthesisAgent.knowledge_base.Route", "relation": "VERIFIES", "target": "GeneratorAgents.knowledge_base.Molecule" }
+  ],
+  "graph": {
+    "nodes": {
+      "IntentAgent": {
+        "layer": "Interaction",
+        "description": "Parses user input and manages dialogue state.",
+        "tools": ["Transformers", "LangChain", "FastAPI", "Gradio", "Uvicorn"],
+        "inputs": ["User Text", "PDB ID", "SMILES", "Files"],
+        "outputs": ["Intent JSON", "Task Parameters"],
+        "connections": {
+          "to": ["TargetAgent", "RAGAgent", "ConditionAgent"],
+          "type": "Control Flow"
+        },
+        "knowledge_base": {
+          "concepts": ["Intent Classification", "Entity Extraction", "Dialogue Management"],
+          "memory_type": "Long-term Dialogue Memory (Redis)"
+        }
+      },
+      "TargetAgent": {
+        "layer": "Data_Preparation",
+        "description": "Prepares protein target structures.",
+        "tools": ["PDBFixer", "fpocket", "AmberTools"],
+        "inputs": ["PDB ID", "PDB File"],
+        "outputs": ["Cleaned PDB", "Pocket Coordinates (.pqr/.pdb)", "Pocket Vector"],
+        "connections": {
+          "from": ["IntentAgent"],
+          "to": ["ConditionAgent", "GeneratorAgents", "EvaluatorAgent"],
+          "type": "Data Flow"
+        },
+        "knowledge_base": {
+          "concepts": ["Protein Structure", "Binding Pocket", "Residue Analysis"],
+          "validation_rules": ["Check missing atoms", "Check protonation"]
+        }
+      },
+      "RAGAgent": {
+        "layer": "Data_Preparation",
+        "description": "Retrieves external knowledge and literature.",
+        "tools": ["ragatouille", "faiss", "pubchempy", "biopython"],
+        "inputs": ["Search Query", "Target Name", "Molecule ID"],
+        "outputs": ["Literature Summary", "Reference List", "Similar Molecules"],
+        "connections": {
+          "from": ["IntentAgent", "ConditionAgent"],
+          "to": ["ConditionAgent", "ReportAgent"],
+          "type": "Information Flow"
+        },
+        "knowledge_base": {
+          "sources": ["PubChem", "ChEMBL", "BindingDB", "Literature"],
+          "memory_type": "Semantic Memory (FAISS)"
+        }
+      },
+      "ConditionAgent": {
+        "layer": "Reasoning_Control",
+        "description": "Synthesizes constraints and conditions for generation.",
+        "tools": ["NumPy", "PyTorch", "SciPy"],
+        "inputs": ["Pocket Info", "User Constraints", "RAG Summary"],
+        "outputs": ["Condition Vector", "Generation Prompt"],
+        "connections": {
+          "from": ["TargetAgent", "RAGAgent", "IntentAgent"],
+          "to": ["GeneratorAgents"],
+          "type": "Control Flow"
+        },
+        "knowledge_base": {
+          "concepts": ["Pharmacophore", "Constraint Optimization", "Prompt Engineering"]
+        }
+      },
+      "GeneratorAgents": {
+        "layer": "Generation",
+        "description": "Generates candidate molecules using various models.",
+        "tools": ["AutoFragDiff", "DecompDiff", "DiffSBDD", "MiDi", "GenMol", "DiffGui"],
+        "inputs": ["Condition Vector", "Pocket Structure"],
+        "outputs": ["SMILES List", "3D Conformations (SDF/PDB)"],
+        "connections": {
+          "from": ["ConditionAgent"],
+          "to": ["EvaluatorAgent", "CoordinatorAgent"],
+          "type": "Data Flow"
+        },
+        "knowledge_base": {
+          "models": ["Structure-based", "Ligand-based", "Fragment-based"],
+          "coordination": "Shared Blackboard Memory"
+        }
+      },
+      "EvaluatorAgent": {
+        "layer": "Evaluation",
+        "description": "Evaluates generated molecules.",
+        "tools": ["RDKit", "AutoDock Vina", "Smina", "Gnina", "Chemprop", "QED", "SA_Score", "PoseBusters", "PLIP", "ProLIF", "MDAnalysis", "AmberTools", "OpenMM"],
+        "inputs": ["Molecules (SMILES/SDF)", "Target Structure"],
+        "outputs": ["Score Matrix (QED, SA, Affinity, ADMET)"],
+        "connections": {
+          "from": ["GeneratorAgents"],
+          "to": ["CoordinatorAgent", "ReportAgent"],
+          "type": "Feedback Flow"
+        },
+        "knowledge_base": {
+          "metrics": ["Drug-likeness", "Synthesizability", "Binding Affinity", "Toxicity"],
+          "adaptive_thresholds": true
+        }
+      },
+      "CoordinatorAgent": {
+        "layer": "Reasoning_Control",
+        "description": "Manages the generation-evaluation loop and optimization.",
+        "tools": ["Accelerate", "WandB", "LangGraph", "LangChain"],
+        "inputs": ["Evaluation Scores", "Generation History"],
+        "outputs": ["Optimization Strategy", "Stop Signal", "Refined Conditions"],
+        "connections": {
+          "from": ["EvaluatorAgent"],
+          "to": ["GeneratorAgents", "ConditionAgent"],
+          "type": "Control Loop"
+        },
+        "knowledge_base": {
+          "strategies": ["PPO", "GFlowNet", "Genetic Algorithm"],
+          "memory_type": "Global State Memory"
+        }
+      },
+      "SynthesisAgent": {
+        "layer": "Synthesis",
+        "description": "Analyzes synthetic accessibility and plans routes.",
+        "tools": ["Syntheseus"],
+        "inputs": ["Selected Molecules"],
+        "outputs": ["Synthesis Routes", "Complexity Score"],
+        "connections": {
+          "from": ["CoordinatorAgent", "EvaluatorAgent"],
+          "to": ["ReportAgent"],
+          "type": "Data Flow"
+        },
+        "knowledge_base": {
+          "concepts": ["Retrosynthesis", "Reaction Templates", "Building Blocks"]
+        }
+      },
+      "ReportAgent": {
+        "layer": "Interaction",
+        "description": "Generates final reports and visualizations.",
+        "tools": ["Pandas", "Matplotlib", "Seaborn", "Rich", "NetworkX"],
+        "inputs": ["All Results", "Safety Checks"],
+        "outputs": ["PDF/HTML Report", "Visualizations"],
+        "connections": {
+          "from": ["EvaluatorAgent", "SynthesisAgent", "RAGAgent"],
+          "to": ["User"],
+          "type": "Output Flow"
+        },
+        "knowledge_base": {
+          "templates": ["Academic Paper", "Lab Report", "Summary"],
+          "safety_protocols": ["Toxicity Check", "Hazard Check"]
+        }
+      },
+      "TestAgent": {
+        "layer": "System",
+        "description": "Manages system testing and benchmarking.",
+        "tools": ["WandB", "Psutil", "Click"],
+        "inputs": ["System Logs", "Model Outputs"],
+        "outputs": ["Test Reports", "Performance Metrics"],
+        "connections": {
+          "from": ["All Agents"],
+          "to": ["CoordinatorAgent"],
+          "type": "Monitoring"
+        },
+        "knowledge_base": {
+          "benchmarks": ["Moses", "GuacaMol"],
+          "metrics": ["Success Rate", "Diversity", "Novelty"]
+        }
+      }
+    }
+  }
+};
+
+    // Color Mapping for Agents
+    const layerColors = {
+        "Interaction": "#97c2fc", // Blue
+        "Data_Preparation": "#7BE141", // Green
+        "Reasoning_Control": "#ffb347", // Orange
+        "Generation": "#fb7e81", // Red
+        "Evaluation": "#c2fabc", // Light Green/Purple-ish
+        "Synthesis": "#ffff00", // Yellow
+        "System": "#eb7df4" // Purple
+    };
+
+    // Color Mapping for Tools
+    const toolColors = {
+        "Target Preparation": "#4CAF50",
+        "Ligand Preparation": "#8BC34A",
+        "Docking": "#00BCD4",
+        "Generative Models": "#F44336",
+        "Optimization": "#FF9800",
+        "ADMET/Scoring": "#9C27B0",
+        "Analysis": "#3F51B5",
+        "Synthesis": "#FFEB3B",
+        "AI & Deep Learning": "#E91E63",
+        "Data Science": "#2196F3",
+        "Web & Interaction": "#009688",
+        "DevOps & Monitoring": "#607D8B",
+        "Developer Utilities": "#795548",
+        "Other": "#9E9E9E"
+    };
+
+    // Prepare Nodes
+    const nodes = [];
+    const edges = [];
+    const nodeMap = kgData.graph.nodes;
+    const toolRegistry = kgData.tool_registry;
+
+    // Create Legend
+    const agentLegendDiv = document.getElementById('agent-legend');
+    for (const [layer, color] of Object.entries(layerColors)) {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<div class="color-box" style="background-color: ${color};"></div>${layer}`;
+        agentLegendDiv.appendChild(item);
+    }
+
+    const toolLegendDiv = document.getElementById('tool-legend');
+    for (const [cat, color] of Object.entries(toolColors)) {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        item.innerHTML = `<div class="color-box shape-circle" style="background-color: ${color};"></div>${cat}`;
+        toolLegendDiv.appendChild(item);
+    }
+
+    // Process Agent Nodes
+    for (const [agentName, data] of Object.entries(nodeMap)) {
+        nodes.push({
+            id: agentName,
+            label: agentName,
+            title: data.description,
+            group: data.layer,
+            color: layerColors[data.layer] || '#cccccc',
+            shape: 'box',
+            font: { size: 20, face: 'arial', color: '#000000' },
+            margin: 10,
+            // Store extra data for click event
+            type: 'Agent',
+            tools: data.tools,
+            inputs: data.inputs,
+            outputs: data.outputs
+        });
+
+        // Process Connections (Edges)
+        if (data.connections && data.connections.to) {
+            data.connections.to.forEach(target => {
+                if (target === "User") return; 
+                
+                edges.push({
+                    from: agentName,
+                    to: target,
+                    arrows: 'to',
+                    label: data.connections.type || '',
+                    font: { align: 'middle', size: 10 },
+                    color: { color: '#848484' },
+                    width: 2
+                });
+            });
+        }
+
+        // Process Tools for this Agent
+        if (data.tools) {
+            data.tools.forEach(toolName => {
+                // Check if tool node already exists (some tools might be shared, though rare in this KG)
+                const existingTool = nodes.find(n => n.id === toolName);
+                
+                if (!existingTool) {
+                    // Get tool metadata
+                    const toolMeta = toolRegistry[toolName];
+                    const category = toolMeta ? toolMeta.category : "Other";
+                    const color = toolColors[category] || toolColors["Other"];
+
+                    nodes.push({
+                        id: toolName,
+                        label: toolName,
+                        title: toolMeta ? `${toolMeta.function} (${toolMeta.usage})` : "Tool",
+                        group: category,
+                        color: color,
+                        shape: 'dot',
+                        size: 10,
+                        font: { size: 12, color: '#555555' },
+                        // Store extra data
+                        type: 'Tool',
+                        meta: toolMeta
+                    });
+                }
+
+                // Create Edge from Agent to Tool
+                edges.push({
+                    from: agentName,
+                    to: toolName,
+                    arrows: 'to',
+                    dashes: true,
+                    color: { color: '#cccccc', opacity: 0.5 },
+                    length: 100 // Keep tools somewhat close
+                });
+            });
+        }
+    }
+
+    // Process Knowledge Links (Dashed Edges between Agents)
+    kgData.links.forEach(link => {
+        const sourceAgent = link.source.split('.')[0];
+        const targetAgent = link.target.split('.')[0];
+
+        if (nodeMap[sourceAgent] && nodeMap[targetAgent]) {
+             edges.push({
+                from: sourceAgent,
+                to: targetAgent,
+                arrows: 'to',
+                dashes: true,
+                label: link.relation,
+                font: { align: 'bottom', size: 9, color: '#555' },
+                color: { color: '#555', opacity: 0.6 }
+            });
+        }
+    });
+
+    // Initialize Network
+    const container = document.getElementById('mynetwork');
+    const data = {
+        nodes: new vis.DataSet(nodes),
+        edges: new vis.DataSet(edges)
+    };
+    const options = {
+        physics: {
+            stabilization: false,
+            barnesHut: {
+                gravitationalConstant: -3000,
+                centralGravity: 0.3,
+                springLength: 150,
+                springConstant: 0.04,
+                damping: 0.09,
+                avoidOverlap: 0.1
+            },
+            minVelocity: 0.75
+        },
+        interaction: {
+            hover: true,
+            tooltipDelay: 200,
+            navigationButtons: true,
+            keyboard: true
+        },
+        nodes: {
+            borderWidth: 1,
+            shadow: true
+        },
+        edges: {
+            smooth: {
+                type: 'continuous'
+            }
+        }
+    };
+    const network = new vis.Network(container, data, options);
+
+    // Click Event for Details
+    network.on("click", function (params) {
+        const detailsDiv = document.getElementById('details');
+        const contentDiv = document.getElementById('node-content');
+        
+        if (params.nodes.length > 0) {
+            const nodeId = params.nodes[0];
+            const nodeData = nodes.find(n => n.id === nodeId);
+            
+            if (nodeData) {
+                let html = `<h3>${nodeData.label}</h3>`;
+                
+                if (nodeData.type === 'Agent') {
+                    html += `<p><i>${nodeData.title}</i></p>`;
+                    html += `<h4>Inputs</h4><ul>`;
+                    nodeData.inputs.forEach(i => html += `<li>${i}</li>`);
+                    html += `</ul>`;
+                    html += `<h4>Outputs</h4><ul>`;
+                    nodeData.outputs.forEach(o => html += `<li>${o}</li>`);
+                    html += `</ul>`;
+                } else if (nodeData.type === 'Tool') {
+                    const meta = nodeData.meta;
+                    if (meta) {
+                        html += `<p><b>Category:</b> ${meta.category}</p>`;
+                        html += `<p><b>Function:</b> ${meta.function}</p>`;
+                        html += `<p><b>Source:</b> ${meta.source}</p>`;
+                        html += `<p><b>Input:</b> ${meta.input}</p>`;
+                        html += `<p><b>Output:</b> ${meta.output}</p>`;
+                        html += `<p><b>Usage:</b> <code>${meta.usage}</code></p>`;
+                    } else {
+                        html += `<p>No details available.</p>`;
+                    }
+                }
+
+                contentDiv.innerHTML = html;
+                detailsDiv.style.display = 'block';
+            }
+        } else {
+            detailsDiv.style.display = 'none';
+        }
+    });
+
+</script>
+
+</body>
+</html>

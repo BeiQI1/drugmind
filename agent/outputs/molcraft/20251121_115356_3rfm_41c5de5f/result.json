@@ -1,0 +1,3 @@
+{
+  "error": "argument `exp_name` required, \n                        should be specified from command line with: --exp_name <value>,\n                        or set a default value for `exp_name` in `./checkpoints/config.yaml` file.\n                        "
+}

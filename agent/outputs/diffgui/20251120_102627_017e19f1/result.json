@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "molecules": [],
+  "message": "`np.compat` was removed in the NumPy 2.0 release. There's no replacement, as Python 2 is no longer supported.",
+  "raw_error": "Traceback (most recent call last):\n  File \"/home/public_data/ytyu/pythonproject/drugtoolagent/services/diffgui_api/app.py\", line 400, in generate\n    mols = RUNTIME.generate(body)\n  File \"/home/public_data/ytyu/pythonproject/drugtoolagent/services/diffgui_api/app.py\", line 235, in generate\n    data = pdb_to_pocket(req.pocket_pdb_path, req.ligand_sdf_path, req.frag_sdf_path)\nAttributeError: `np.compat` was removed in the NumPy 2.0 release. There's no replacement, as Python 2 is no longer supported.\n"
+}

@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "molecules": [],
+  "message": "cannot import name 'make_data_placeholder' from 'utils.misc' (/home/public_data/ytyu/pythonproject/drugtoolagent/model/DiffGui/utils/misc.py)",
+  "raw_error": "Traceback (most recent call last):\n  File \"/home/public_data/ytyu/pythonproject/drugtoolagent/services/diffgui_api/app.py\", line 400, in generate\n    mols = RUNTIME.generate(body)\n  File \"/home/public_data/ytyu/pythonproject/drugtoolagent/services/diffgui_api/app.py\", line 283, in generate\n    batch_holder = make_data_placeholder(n_nodes_list=ligand_num_atoms, device=self.device)\nImportError: cannot import name 'make_data_placeholder' from 'utils.misc' (/home/public_data/ytyu/pythonproject/drugtoolagent/model/DiffGui/utils/misc.py)\n"
+}

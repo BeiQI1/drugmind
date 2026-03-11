@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "molecules": [],
+  "message": "name 'FeatureComplex' is not defined",
+  "raw_error": "Traceback (most recent call last):\n  File \"/home/public_data/ytyu/pythonproject/drugtoolagent/services/diffgui_api/app.py\", line 396, in generate\n    mols = RUNTIME.generate(body)\n  File \"/home/public_data/ytyu/pythonproject/drugtoolagent/services/diffgui_api/app.py\", line 228, in generate\n    self.load(req.checkpoint, req.bond_predictor, req.gen_mode)\nNameError: name 'FeatureComplex' is not defined\n"
+}

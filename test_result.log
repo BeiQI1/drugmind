@@ -1,0 +1,7 @@
+=== Test 1: The Trap Task (Intent: synthesis_planning, No Molecules) ===
+Generated Plan: ['TargetAgent', 'GeneratorAgent', 'SynthesisAgent', 'ReportAgent']
+PASSED: Plan correctly handles the Trap Task with backward chaining.
+
+=== Test 2: Normal Task (Intent: synthesis_planning, With Molecules) ===
+Generated Plan: ['SynthesisAgent', 'ReportAgent']
+PASSED: Plan correctly skips GeneratorAgent when molecules are present.

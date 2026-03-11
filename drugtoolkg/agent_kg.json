@@ -1,0 +1,1049 @@
+{
+  "meta": {
+    "description": "Drug Design Multi-Agent System Knowledge Graph",
+    "version": "2.0",
+    "layers": [
+      "Interaction",
+      "Data_Preparation",
+      "Reasoning_Control",
+      "Generation",
+      "Evaluation",
+      "Synthesis",
+      "System"
+    ]
+  },
+  "tool_registry": {
+    "PDBFixer": {
+      "category": "Target Preparation",
+      "source": "DrugToolAgent Codebase",
+      "function": "Repairs and cleans a PDB file.",
+      "input": "PDB",
+      "output": "PDB",
+      "usage": "TargetAgent.run_pdbfixer"
+    },
+    "fpocket": {
+      "category": "Target Preparation",
+      "source": "DrugToolAgent Codebase",
+      "function": "Detects binding pockets.",
+      "input": "PDB",
+      "output": "PDB/Text",
+      "usage": "TargetAgent.run_fpocket"
+    },
+    "AmberTools": {
+      "category": "Target Preparation",
+      "source": "Amber",
+      "function": "MD Prep, force field assignment, and analysis",
+      "input": "PDB",
+      "output": "Top/Crd",
+      "usage": "CLI"
+    },
+    "RDKit": {
+      "category": "Target Preparation",
+      "source": "DrugToolAgent Codebase",
+      "function": "Calculates geometric center of a ligand.",
+      "input": "SMILES",
+      "output": "SDF/Mol",
+      "usage": "TargetAgent.calculate_center_from_sdf"
+    },
+    "OpenBabel": {
+      "category": "Ligand Preparation",
+      "source": "GitHub",
+      "function": "Chemical file format conversion and coordinate generation",
+      "input": "Various",
+      "output": "Various",
+      "usage": "CLI/Python"
+    },
+    "Meeko": {
+      "category": "Ligand Preparation",
+      "source": "ForliLab",
+      "function": "Preparation of ligands for AutoDock Vina (PDBQT)",
+      "input": "SDF",
+      "output": "PDBQT",
+      "usage": "Python"
+    },
+    "AutoDock Vina": {
+      "category": "Docking",
+      "source": "Scripps",
+      "function": "Fast molecular docking and virtual screening",
+      "input": "PDBQT",
+      "output": "PDBQT/Log",
+      "usage": "CLI"
+    },
+    "Smina": {
+      "category": "Docking",
+      "source": "Gnina",
+      "function": "Vina fork with enhanced scoring and minimization",
+      "input": "PDB/SDF",
+      "output": "SDF",
+      "usage": "CLI"
+    },
+    "Gnina": {
+      "category": "Docking",
+      "source": "Gnina",
+      "function": "Deep learning-based molecular docking and scoring",
+      "input": "PDB/SDF",
+      "output": "SDF",
+      "usage": "CLI"
+    },
+    "DecompDiff": {
+      "category": "Generative Models",
+      "source": "Local",
+      "function": "SBDD with Decomposed Priors for linker/scaffold generation",
+      "input": "PDB",
+      "output": "SDF",
+      "usage": "model.DecompDiff"
+    },
+    "DiffSBDD": {
+      "category": "Generative Models",
+      "source": "Local",
+      "function": "Equivariant Diffusion for Structure-Based Drug Design",
+      "input": "PDB",
+      "output": "SDF",
+      "usage": "model.DiffSBDD"
+    },
+    "MiDi": {
+      "category": "Generative Models",
+      "source": "Local",
+      "function": "Mixed Graph/3D Diffusion for molecular generation",
+      "input": "PDB/SMILES",
+      "output": "SDF",
+      "usage": "model.MiDi"
+    },
+    "GenMol": {
+      "category": "Generative Models",
+      "source": "Local",
+      "function": "Discrete Diffusion (SAFE) for molecule generation",
+      "input": "Text/SMILES/PDB",
+      "output": "SMILES/SDF",
+      "usage": "model.genmol"
+    },
+    "DiffGui": {
+      "category": "Generative Models",
+      "source": "Local",
+      "function": "Guided Equivariant Diffusion for target-specific generation",
+      "input": "PDB",
+      "output": "SDF",
+      "usage": "model.DiffGui"
+    },
+    "Chemprop": {
+      "category": "ADMET/Scoring",
+      "source": "GitHub",
+      "function": "Molecular property prediction using D-MPNN",
+      "input": "SMILES",
+      "output": "CSV",
+      "usage": "CLI/Python"
+    },
+    "QED": {
+      "category": "ADMET/Scoring",
+      "source": "RDKit",
+      "function": "Quantitative Estimate of Drug-likeness score",
+      "input": "SMILES",
+      "output": "Float",
+      "usage": "Python"
+    },
+    "SA_Score": {
+      "category": "ADMET/Scoring",
+      "source": "RDKit",
+      "function": "Synthetic Accessibility score",
+      "input": "SMILES",
+      "output": "Float",
+      "usage": "Python"
+    },
+    "PoseBusters": {
+      "category": "Analysis",
+      "source": "GitHub",
+      "function": "Validation of docking poses using physical constraints",
+      "input": "SDF/PDB",
+      "output": "Bool",
+      "usage": "Python/CLI"
+    },
+    "PLIP": {
+      "category": "Analysis",
+      "source": "PharmaI",
+      "function": "Protein-Ligand Interaction Profiling (H-bonds, etc.)",
+      "input": "PDB",
+      "output": "XML/Text",
+      "usage": "CLI/Python"
+    },
+    "ProLIF": {
+      "category": "Analysis",
+      "source": "ChemoSim",
+      "function": "Protein-Ligand Interaction Fingerprints",
+      "input": "MD/PDB",
+      "output": "DF",
+      "usage": "Python"
+    },
+    "MDAnalysis": {
+      "category": "Analysis",
+      "source": "GitHub",
+      "function": "Analysis of molecular dynamics trajectories",
+      "input": "Traj",
+      "output": "Data",
+      "usage": "Python"
+    },
+    "OpenMM": {
+      "category": "Analysis",
+      "source": "GitHub",
+      "function": "High-performance molecular dynamics simulation",
+      "input": "PDB",
+      "output": "Traj",
+      "usage": "Python"
+    },
+    "Syntheseus": {
+      "category": "Synthesis",
+      "source": "Microsoft/MILA",
+      "function": "Retrosynthesis planning and reaction prediction",
+      "input": "SMILES",
+      "output": "Routes/Tree",
+      "usage": "Python"
+    },
+    "PyTorch": {
+      "category": "AI & Deep Learning",
+      "source": "Meta",
+      "function": "Deep learning framework",
+      "input": "Tensors",
+      "output": "Models",
+      "usage": "Python"
+    },
+    "Transformers": {
+      "category": "AI & Deep Learning",
+      "source": "Hugging Face",
+      "function": "Pre-trained models (NLP/Bio)",
+      "input": "Text/Seq",
+      "output": "Embeddings",
+      "usage": "Python"
+    },
+    "LangChain": {
+      "category": "AI & Deep Learning",
+      "source": "LangChain",
+      "function": "LLM orchestration",
+      "input": "Prompt",
+      "output": "Chain",
+      "usage": "Python"
+    },
+    "LangGraph": {
+      "category": "AI & Deep Learning",
+      "source": "LangChain",
+      "function": "Stateful multi-agent orchestration",
+      "input": "State",
+      "output": "State",
+      "usage": "Python"
+    },
+    "Accelerate": {
+      "category": "AI & Deep Learning",
+      "source": "Hugging Face",
+      "function": "Distributed training",
+      "input": "Model",
+      "output": "Model",
+      "usage": "Python"
+    },
+    "Pandas": {
+      "category": "Data Science",
+      "source": "NumFOCUS",
+      "function": "Data manipulation",
+      "input": "CSV/Data",
+      "output": "DataFrame",
+      "usage": "Python"
+    },
+    "NumPy": {
+      "category": "Data Science",
+      "source": "NumFOCUS",
+      "function": "Numerical computing",
+      "input": "Array",
+      "output": "Array",
+      "usage": "Python"
+    },
+    "SciPy": {
+      "category": "Data Science",
+      "source": "NumFOCUS",
+      "function": "Scientific computing",
+      "input": "Array",
+      "output": "Result",
+      "usage": "Python"
+    },
+    "NetworkX": {
+      "category": "Data Science",
+      "source": "Los Alamos",
+      "function": "Graph theory",
+      "input": "Nodes/Edges",
+      "output": "Graph",
+      "usage": "Python"
+    },
+    "Matplotlib": {
+      "category": "Data Science",
+      "source": "NumFOCUS",
+      "function": "Plotting",
+      "input": "Data",
+      "output": "Figure",
+      "usage": "Python"
+    },
+    "Seaborn": {
+      "category": "Data Science",
+      "source": "Waskom",
+      "function": "Statistical data visualization",
+      "input": "Data",
+      "output": "Figure",
+      "usage": "Python"
+    },
+    "FastAPI": {
+      "category": "Web & Interaction",
+      "source": "Tiangolo",
+      "function": "High-performance API framework",
+      "input": "Request",
+      "output": "JSON",
+      "usage": "Python"
+    },
+    "Gradio": {
+      "category": "Web & Interaction",
+      "source": "Hugging Face",
+      "function": "UI for ML models",
+      "input": "Model",
+      "output": "Web UI",
+      "usage": "Python"
+    },
+    "Uvicorn": {
+      "category": "Web & Interaction",
+      "source": "Encode",
+      "function": "ASGI Web Server",
+      "input": "App",
+      "output": "Service",
+      "usage": "CLI"
+    },
+    "WandB": {
+      "category": "DevOps & Monitoring",
+      "source": "Weights & Biases",
+      "function": "Experiment tracking",
+      "input": "Metrics",
+      "output": "Dashboard",
+      "usage": "Python"
+    },
+    "Psutil": {
+      "category": "DevOps & Monitoring",
+      "source": "Giampaolo",
+      "function": "System monitoring",
+      "input": "None",
+      "output": "Stats",
+      "usage": "Python"
+    },
+    "Rich": {
+      "category": "Developer Utilities",
+      "source": "Textualize",
+      "function": "Terminal formatting",
+      "input": "Text",
+      "output": "Styled Text",
+      "usage": "Python"
+    },
+    "Click": {
+      "category": "Developer Utilities",
+      "source": "Pallets",
+      "function": "CLI creation",
+      "input": "Code",
+      "output": "CLI",
+      "usage": "Python"
+    },
+    "ValidatePDB": {
+      "category": "Target Preparation",
+      "function": "Validates if a PDB ID exists and contains protein polymers.",
+      "usage": "TargetAgent.validate_pdb_id",
+      "source": "DrugToolAgent Codebase"
+    },
+    "DownloadPDB": {
+      "category": "Target Preparation",
+      "function": "Downloads a PDB file from RCSB.",
+      "usage": "TargetAgent.download_pdb",
+      "source": "DrugToolAgent Codebase"
+    },
+    "FetchMetadata": {
+      "category": "Target Preparation",
+      "function": "Fetches biological metadata for a PDB ID.",
+      "usage": "TargetAgent.fetch_target_metadata",
+      "source": "DrugToolAgent Codebase"
+    },
+    "CleanPDB": {
+      "category": "Target Preparation",
+      "function": "Simple cleaning of PDB file.",
+      "usage": "TargetAgent.clean_pdb",
+      "source": "DrugToolAgent Codebase"
+    },
+    "ExtractLigand": {
+      "category": "Target Preparation",
+      "function": "Extracts the largest co-crystallized ligand.",
+      "usage": "TargetAgent.extract_ligand_from_pdb",
+      "source": "DrugToolAgent Codebase"
+    },
+    "CalculateCenterFromResidues": {
+      "category": "Target Preparation",
+      "function": "Calculates center of mass for specific residues.",
+      "usage": "TargetAgent.calculate_center_from_residues",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunDiffSBDD": {
+      "category": "Generative Models",
+      "function": "Structure-based molecule generation.",
+      "usage": "GeneratorAgent.run_diffsbdd",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunDiffGui": {
+      "category": "Generative Models",
+      "function": "Property-guided molecule generation.",
+      "usage": "GeneratorAgent.run_diffgui",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunGenMol": {
+      "category": "Generative Models",
+      "function": "SMILES/Language-based molecule generation.",
+      "usage": "GeneratorAgent.run_genmol",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunMiDi": {
+      "category": "Generative Models",
+      "function": "Multi-modal molecule generation.",
+      "usage": "GeneratorAgent.run_midi",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunDecompDiff": {
+      "category": "Generative Models",
+      "function": "Fragment-based molecule generation.",
+      "usage": "GeneratorAgent.run_decompdiff",
+      "source": "DrugToolAgent Codebase"
+    },
+    "CalculateQED": {
+      "category": "Evaluation",
+      "function": "Calculates QED score.",
+      "usage": "EvaluatorAgent.calculate_qed",
+      "source": "DrugToolAgent Codebase"
+    },
+    "CalculateSA": {
+      "category": "Evaluation",
+      "function": "Calculates SA score.",
+      "usage": "EvaluatorAgent.calculate_sa",
+      "source": "DrugToolAgent Codebase"
+    },
+    "CalculateLipinski": {
+      "category": "Evaluation",
+      "function": "Calculates Lipinski rules.",
+      "usage": "EvaluatorAgent.calculate_lipinski",
+      "source": "DrugToolAgent Codebase"
+    },
+    "CalculateToxicity": {
+      "category": "Evaluation",
+      "function": "Calculates Toxicity metrics.",
+      "usage": "EvaluatorAgent.calculate_toxicity",
+      "source": "DrugToolAgent Codebase"
+    },
+    "CalculateDiversity": {
+      "category": "Evaluation",
+      "function": "Calculates diversity metrics.",
+      "usage": "EvaluatorAgent.calculate_diversity",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunStandardEvaluation": {
+      "category": "Evaluation",
+      "function": "Runs standard battery of tests.",
+      "usage": "EvaluatorAgent.run_standard_evaluation",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunDocking": {
+      "category": "Evaluation",
+      "function": "Runs molecular docking.",
+      "usage": "EvaluatorAgent.run_docking",
+      "source": "DrugToolAgent Codebase"
+    },
+    "ValidatePose": {
+      "category": "Evaluation",
+      "function": "Validates docked poses.",
+      "usage": "EvaluatorAgent.validate_pose",
+      "source": "DrugToolAgent Codebase"
+    },
+    "AnalyzeInteractions": {
+      "category": "Evaluation",
+      "function": "Analyzes protein-ligand interactions.",
+      "usage": "EvaluatorAgent.analyze_interactions",
+      "source": "DrugToolAgent Codebase"
+    },
+    "FilterMolecules": {
+      "category": "Evaluation",
+      "function": "Filters molecules based on criteria.",
+      "usage": "EvaluatorAgent.filter_molecules",
+      "source": "DrugToolAgent Codebase"
+    },
+    "LoadCandidates": {
+      "category": "Synthesis",
+      "function": "Loads molecules for synthesis planning.",
+      "usage": "SynthesisAgent.load_candidates",
+      "source": "DrugToolAgent Codebase"
+    },
+    "SelectTopN": {
+      "category": "Synthesis",
+      "function": "Selects top candidates.",
+      "usage": "SynthesisAgent.select_top_n",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunRetrosynthesis": {
+      "category": "Synthesis",
+      "function": "Runs retrosynthesis (Syntheseus).",
+      "usage": "SynthesisAgent.run_retrosynthesis",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RunAiZynth": {
+      "category": "Synthesis",
+      "function": "Runs AiZynthFinder.",
+      "usage": "SynthesisAgent.run_aizynth",
+      "source": "DrugToolAgent Codebase"
+    },
+    "GenerateSynthesisReport": {
+      "category": "Synthesis",
+      "function": "Generates synthesis report.",
+      "usage": "SynthesisAgent.generate_synthesis_report",
+      "source": "DrugToolAgent Codebase"
+    },
+    "AnalyzeRouteComplexity": {
+      "category": "Synthesis",
+      "function": "Analyzes route complexity.",
+      "usage": "SynthesisAgent.analyze_route_complexity",
+      "source": "DrugToolAgent Codebase"
+    },
+    "LoadData": {
+      "category": "Reporting",
+      "function": "Loads data for reporting.",
+      "usage": "ReportAgent.load_data",
+      "source": "DrugToolAgent Codebase"
+    },
+    "RetrieveContext": {
+      "category": "Reporting",
+      "function": "Retrieves background context.",
+      "usage": "ReportAgent.retrieve_context",
+      "source": "DrugToolAgent Codebase"
+    },
+    "GenerateDistributionPlot": {
+      "category": "Reporting",
+      "function": "Generates distribution plots.",
+      "usage": "ReportAgent.generate_distribution_plot",
+      "source": "DrugToolAgent Codebase"
+    },
+    "GenerateCorrelationPlot": {
+      "category": "Reporting",
+      "function": "Generates correlation plots.",
+      "usage": "ReportAgent.generate_correlation_plot",
+      "source": "DrugToolAgent Codebase"
+    },
+    "GenerateHeatmap": {
+      "category": "Reporting",
+      "function": "Generates heatmaps.",
+      "usage": "ReportAgent.generate_heatmap",
+      "source": "DrugToolAgent Codebase"
+    },
+    "GenerateMoleculeGrid": {
+      "category": "Reporting",
+      "function": "Generates molecule grid images.",
+      "usage": "ReportAgent.generate_molecule_grid",
+      "source": "DrugToolAgent Codebase"
+    },
+    "GenerateSimilarityNetwork": {
+      "category": "Reporting",
+      "function": "Generates similarity networks.",
+      "usage": "ReportAgent.generate_similarity_network",
+      "source": "DrugToolAgent Codebase"
+    },
+    "GetTable": {
+      "category": "Reporting",
+      "function": "Generates data tables.",
+      "usage": "ReportAgent.get_table",
+      "source": "DrugToolAgent Codebase"
+    },
+    "AssessToxicity": {
+      "category": "Reporting",
+      "function": "Assesses toxicity risks.",
+      "usage": "ReportAgent.assess_toxicity",
+      "source": "DrugToolAgent Codebase"
+    },
+    "WriteSection": {
+      "category": "Reporting",
+      "function": "Writes report sections.",
+      "usage": "ReportAgent.write_section",
+      "source": "DrugToolAgent Codebase"
+    },
+    "Finish": {
+      "category": "Control",
+      "function": "Completes the agent's task.",
+      "usage": "Agent.finish",
+      "source": "DrugToolAgent Codebase"
+    }
+  },
+  "links": [
+    {
+      "source": "TargetAgent.knowledge_base.Pocket",
+      "relation": "PROVIDES_CONTEXT_FOR",
+      "target": "GeneratorAgent.knowledge_base.SBDD_Model"
+    },
+    {
+      "source": "GeneratorAgent.knowledge_base.Molecule",
+      "relation": "EVALUATED_BY",
+      "target": "EvaluatorAgent.knowledge_base.Metric"
+    },
+    {
+      "source": "EvaluatorAgent.knowledge_base.Score",
+      "relation": "OPTIMIZED_BY",
+      "target": "CoordinatorAgent.knowledge_base.Strategy"
+    },
+    {
+      "source": "SynthesisAgent.knowledge_base.Route",
+      "relation": "VERIFIES",
+      "target": "GeneratorAgent.knowledge_base.Molecule"
+    }
+  ],
+  "graph": {
+    "nodes": {
+      "IntentAgent": {
+        "layer": "Interaction",
+        "description": "Parses user input and manages dialogue state.",
+        "tools": [
+          "Transformers",
+          "LangChain",
+          "FastAPI",
+          "Gradio",
+          "Uvicorn"
+        ],
+        "inputs": [
+          "User Text",
+          "PDB ID",
+          "SMILES",
+          "Files"
+        ],
+        "outputs": [
+          "Intent JSON",
+          "Task Parameters"
+        ],
+        "connections": {
+          "to": [
+            "TargetAgent",
+            "RAGAgent"
+          ],
+          "type": "Control Flow"
+        },
+        "knowledge_base": {
+          "concepts": [
+            "Intent Classification",
+            "Entity Extraction",
+            "Dialogue Management"
+          ],
+          "memory_type": "Long-term Dialogue Memory (Redis)"
+        }
+      },
+      "TargetAgent": {
+        "layer": "Data_Preparation",
+        "description": "Prepares protein target structures.",
+        "tools": [
+          "ValidatePDB",
+          "DownloadPDB",
+          "FetchMetadata",
+          "PDBFixer",
+          "CleanPDB",
+          "ExtractLigand",
+          "RDKit",
+          "fpocket",
+          "CalculateCenterFromResidues",
+          "Finish"
+        ],
+        "inputs": [
+          "PDB ID",
+          "PDB File"
+        ],
+        "outputs": [
+          "Cleaned PDB",
+          "Pocket Coordinates (.pqr/.pdb)",
+          "Pocket Vector"
+        ],
+        "connections": {
+          "from": [
+            "IntentAgent"
+          ],
+          "to": [
+            "GeneratorAgent",
+            "EvaluatorAgent"
+          ],
+          "type": "Data Flow"
+        },
+        "knowledge_base": {
+          "concepts": [
+            "Protein Structure",
+            "Binding Pocket",
+            "Residue Analysis"
+          ],
+          "validation_rules": [
+            "Check missing atoms",
+            "Check protonation"
+          ]
+        }
+      },
+      "RAGAgent": {
+        "layer": "Data_Preparation",
+        "description": "Retrieves external knowledge and literature.",
+        "tools": [
+          "ragatouille",
+          "faiss",
+          "pubchempy",
+          "biopython"
+        ],
+        "inputs": [
+          "Search Query",
+          "Target Name",
+          "Molecule ID"
+        ],
+        "outputs": [
+          "Literature Summary",
+          "Reference List",
+          "Similar Molecules"
+        ],
+        "connections": {
+          "from": [
+            "IntentAgent",
+            "ConditionAgent"
+          ],
+          "to": [
+            "ReportAgent"
+          ],
+          "type": "Information Flow"
+        },
+        "knowledge_base": {
+          "sources": [
+            "PubChem",
+            "ChEMBL",
+            "BindingDB",
+            "Literature"
+          ],
+          "memory_type": "Semantic Memory (FAISS)"
+        }
+      },
+      "EvaluatorAgent": {
+        "layer": "Evaluation",
+        "description": "Evaluates generated molecules.",
+        "tools": [
+          "CalculateQED",
+          "CalculateSA",
+          "CalculateLipinski",
+          "CalculateToxicity",
+          "CalculateDiversity",
+          "RunStandardEvaluation",
+          "RunDocking",
+          "ValidatePose",
+          "AnalyzeInteractions",
+          "FilterMolecules",
+          "Finish"
+        ],
+        "inputs": [
+          "Molecules (SMILES/SDF)",
+          "Target Structure"
+        ],
+        "outputs": [
+          "Score Matrix (QED, SA, Affinity, ADMET)"
+        ],
+        "connections": {
+          "from": [
+            "GeneratorAgents"
+          ],
+          "to": [
+            "CoordinatorAgent",
+            "ReportAgent"
+          ],
+          "type": "Feedback Flow"
+        },
+        "knowledge_base": {
+          "metrics": [
+            "Drug-likeness",
+            "Synthesizability",
+            "Binding Affinity",
+            "Toxicity"
+          ],
+          "adaptive_thresholds": true
+        }
+      },
+      "CoordinatorAgent": {
+        "layer": "Reasoning_Control",
+        "description": "Manages the generation-evaluation loop and optimization.",
+        "tools": [
+          "Accelerate",
+          "WandB",
+          "LangGraph",
+          "LangChain"
+        ],
+        "inputs": [
+          "Evaluation Scores",
+          "Generation History"
+        ],
+        "outputs": [
+          "Optimization Strategy",
+          "Stop Signal",
+          "Refined Conditions"
+        ],
+        "connections": {
+          "from": [
+            "EvaluatorAgent"
+          ],
+          "to": [
+            "GeneratorAgent"
+          ],
+          "type": "Control Loop"
+        },
+        "knowledge_base": {
+          "strategies": [
+            "PPO",
+            "GFlowNet",
+            "Genetic Algorithm"
+          ],
+          "memory_type": "Global State Memory"
+        }
+      },
+      "SynthesisAgent": {
+        "layer": "Synthesis",
+        "description": "Analyzes synthetic accessibility and plans routes.",
+        "tools": [
+          "LoadCandidates",
+          "SelectTopN",
+          "RunRetrosynthesis",
+          "RunAiZynth",
+          "GenerateSynthesisReport",
+          "AnalyzeRouteComplexity",
+          "Finish"
+        ],
+        "inputs": [
+          "Selected Molecules"
+        ],
+        "outputs": [
+          "Synthesis Routes",
+          "Complexity Score"
+        ],
+        "connections": {
+          "from": [
+            "CoordinatorAgent",
+            "EvaluatorAgent"
+          ],
+          "to": [
+            "ReportAgent"
+          ],
+          "type": "Data Flow"
+        },
+        "knowledge_base": {
+          "concepts": [
+            "Retrosynthesis",
+            "Reaction Templates",
+            "Building Blocks"
+          ]
+        }
+      },
+      "ReportAgent": {
+        "layer": "Interaction",
+        "description": "Generates final reports and visualizations.",
+        "tools": [
+          "LoadData",
+          "RetrieveContext",
+          "GenerateDistributionPlot",
+          "GenerateCorrelationPlot",
+          "GenerateHeatmap",
+          "GenerateMoleculeGrid",
+          "GenerateSimilarityNetwork",
+          "GetTable",
+          "AssessToxicity",
+          "WriteSection",
+          "Finish"
+        ],
+        "inputs": [
+          "All Results",
+          "Safety Checks"
+        ],
+        "outputs": [
+          "PDF/HTML Report",
+          "Visualizations"
+        ],
+        "connections": {
+          "from": [
+            "EvaluatorAgent",
+            "SynthesisAgent",
+            "RAGAgent"
+          ],
+          "to": [
+            "User"
+          ],
+          "type": "Output Flow"
+        },
+        "knowledge_base": {
+          "templates": [
+            "Academic Paper",
+            "Lab Report",
+            "Summary"
+          ],
+          "safety_protocols": [
+            "Toxicity Check",
+            "Hazard Check"
+          ]
+        }
+      },
+      "GeneratorAgent": {
+        "layer": "Generation",
+        "description": "Generates candidate molecules using various models.",
+        "tools": [
+          "RunDiffSBDD",
+          "RunDiffGui",
+          "RunGenMol",
+          "RunMiDi",
+          "RunDecompDiff",
+          "Finish"
+        ],
+        "inputs": [
+          "Condition Vector",
+          "Pocket Structure"
+        ],
+        "outputs": [
+          "SMILES List",
+          "3D Conformations (SDF/PDB)"
+        ],
+        "connections": {
+          "from": [
+            "ConditionAgent"
+          ],
+          "to": [
+            "EvaluatorAgent",
+            "CoordinatorAgent"
+          ],
+          "type": "Data Flow"
+        },
+        "knowledge_base": {
+          "models": [
+            "Structure-based",
+            "Ligand-based",
+            "Fragment-based"
+          ],
+          "coordination": "Shared Blackboard Memory"
+        }
+      }
+    }
+  },
+  "workflow_logic": {
+    "data_dependencies": {
+      "Target_ID": [],
+      "Protein_Structure": [
+        "TargetAgent"
+      ],
+      "Pocket_Info": [
+        "TargetAgent"
+      ],
+      "Molecules_SMILES": [
+        "GeneratorAgent"
+      ],
+      "Optimized_SMILES": [
+        "GeneratorAgent"
+      ],
+      "Evaluation_Report": [
+        "EvaluatorAgent"
+      ],
+      "Synthesis_Plan": [
+        "SynthesisAgent"
+      ],
+      "Final_Report": [
+        "ReportAgent"
+      ],
+      "Synthesis_Report": [
+        "ReportAgent"
+      ],
+      "Final_Report_With_Synthesis": [
+        "ReportAgent"
+      ]
+    },
+    "agent_requirements": {
+      "TargetAgent": [
+        "Target_ID"
+      ],
+      "GeneratorAgent": [
+        "Pocket_Info"
+      ],
+      "EvaluatorAgent": [
+        "Molecules_SMILES"
+      ],
+      "SynthesisAgent": [
+        "Molecules_SMILES"
+      ],
+      "ReportAgent": [
+        "Evaluation_Report"
+      ]
+    },
+    "conditional_requirements": {
+      "EvaluatorAgent": {
+        "optimization": [
+          "Optimized_SMILES"
+        ],
+        "molecule_optimization": [
+          "Optimized_SMILES"
+        ],
+        "lead_optimization": [
+          "Optimized_SMILES"
+        ],
+        "optimization_with_synthesis": [
+          "Optimized_SMILES"
+        ]
+      },
+      "ReportAgent": {
+        "default": [
+          "Evaluation_Report"
+        ],
+        "retrosynthesis": [
+          "Synthesis_Plan"
+        ],
+        "retrosynthesis_planning": [
+          "Synthesis_Plan"
+        ],
+        "synthesis_planning": [
+          "Synthesis_Plan"
+        ],
+        "generation_with_synthesis": [
+          "Evaluation_Report",
+          "Synthesis_Plan"
+        ],
+        "structure_based_with_synthesis": [
+          "Evaluation_Report",
+          "Synthesis_Plan"
+        ],
+        "de_novo_with_synthesis": [
+          "Evaluation_Report",
+          "Synthesis_Plan"
+        ],
+        "optimization_with_synthesis": [
+          "Evaluation_Report",
+          "Synthesis_Plan"
+        ],
+        "evaluation_with_synthesis": [
+          "Evaluation_Report",
+          "Synthesis_Plan"
+        ]
+      },
+      "GeneratorAgent": {
+        "default": [
+          "Pocket_Info"
+        ],
+        "structure_based": [
+          "Pocket_Info"
+        ],
+        "structure_based_generation": [
+          "Pocket_Info"
+        ],
+        "target_based": [
+          "Pocket_Info"
+        ],
+        "de_novo": [],
+        "de_novo_generation": [],
+        "de_novo_design": [],
+        "optimization": [
+          "Molecules_SMILES"
+        ],
+        "molecule_optimization": [
+          "Molecules_SMILES"
+        ],
+        "lead_optimization": [
+          "Molecules_SMILES"
+        ],
+        "optimization_with_synthesis": [
+          "Molecules_SMILES"
+        ]
+      }
+    }
+  }
+}

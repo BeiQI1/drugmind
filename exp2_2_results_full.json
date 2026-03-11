@@ -1,0 +1,284 @@
+[
+  {
+    "trial_id": 0,
+    "mode": "baseline",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 0,
+    "mode": "ours",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 1,
+    "mode": "baseline",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 1,
+    "mode": "ours",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 2,
+    "mode": "baseline",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 2,
+    "mode": "ours",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 3,
+    "mode": "baseline",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 3,
+    "mode": "ours",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 4,
+    "mode": "baseline",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 4,
+    "mode": "ours",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 5,
+    "mode": "baseline",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 5,
+    "mode": "ours",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 6,
+    "mode": "baseline",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 6,
+    "mode": "ours",
+    "task_type": "param",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 7,
+    "mode": "baseline",
+    "task_type": "trap",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 7,
+    "mode": "ours",
+    "task_type": "trap",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 8,
+    "mode": "baseline",
+    "task_type": "trap",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 8,
+    "mode": "ours",
+    "task_type": "trap",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 9,
+    "mode": "baseline",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "EvaluatorAgent",
+      "SynthesisAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  },
+  {
+    "trial_id": 9,
+    "mode": "ours",
+    "task_type": "simple",
+    "plan": [
+      "TargetAgent",
+      "GeneratorAgent",
+      "ReportAgent"
+    ],
+    "hallucination": false,
+    "param_error": false,
+    "success": true
+  }
+]
