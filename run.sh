@@ -2,5 +2,5 @@
 set -e
 
 source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate drugtoolagent
+conda activate drugmind
 streamlit run streamlit_app.py
