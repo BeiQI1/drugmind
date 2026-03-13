@@ -155,7 +155,7 @@ environment/README.md
 
 ------
 
-# ⬇️ Download Required Resources
+# 📥 Download Required Resources
 
 Due to repository size limitations, some essential components are hosted on **Zenodo**.
 
@@ -229,7 +229,7 @@ These resources are required for running the full workflow.
 
 ------
 
-# ⚙️ Environment Configuration
+# 🛠 Environment Configuration
 
 All environment configuration files are located in:
 
