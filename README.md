@@ -6,17 +6,17 @@
 
 ## 📚 Table of Contents
 
-- [🔎 Overview](#overview)
-- [✨ Key Features](#key-features)
-- [📦 Repository Structure](#repository-structure)
-- [⚡ Getting Started](#getting-started)
-  - [🛠 Installation](#installation)
-  - [⬇️ Download Required Resources](#download-required-resources)
-  - [🚀 Run the Framework](#run-the-framework)
-- [📊 Data and Resources](#data-and-resources)
-- [⚙️ Environment Configuration](#environment-configuration)
-- [🗺 Roadmap](#roadmap)
-- [📖 Citation](#citation)
+- [🔎 Overview](#-overview)
+- [✨ Key Features](#-key-features)
+- [📦 Repository Structure](#-repository-structure)
+- [⚡ Getting Started](#-getting-started)
+  - [🛠 Installation](#-installation)
+  - [⬇️ Download Required Resources](#-download-required-resources)
+  - [🚀 Run the Framework](#-run-the-framework)
+- [📊 Data and Resources](#-data-and-resources)
+- [⚙️ Environment Configuration](#-environment-configuration)
+- [🗺 Roadmap](#-roadmap)
+- [📖 Citation](#-citation)
 
 ------
 
